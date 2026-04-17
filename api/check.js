@@ -1,29 +1,21 @@
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-
-  const { mobile } = req.query;
-
-  if (!mobile || mobile.length !== 10) {
-    return res.status(400).json({ status: "error" });
-  }
-
   try {
-    const response = await fetch(`https://jm101.com/jiomartcoupon/getR1Points?mobile=${mobile}`, {
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "application/json"
-      }
-    });
+    const mobile = req.query.mobile;
 
-    const data = await response.json();
-
-    if (data.message === "") {
-      return res.status(200).json({ status: "not_found" });
-    } else {
-      return res.status(200).json({ status: "registered" });
+    if (!mobile) {
+      return res.status(400).json({ error: "No mobile" });
     }
 
-  } catch (error) {
-    return res.status(500).json({ status: "error" });
+    const response = await fetch(
+      "https://jm101.com/jiomartcoupon/getR1Points?mobile=" + mobile
+    );
+
+    const text = await response.text(); // ⚠️ IMPORTANT
+
+    // 👇 return raw API response (no parsing issues)
+    res.status(200).send(text);
+
+  } catch (err) {
+    res.status(500).json({ error: "API failed" });
   }
 }
