@@ -78,11 +78,11 @@
 <body>
 
 <div class="box">
-  <h2>Check Mobile</h2>
+  <h2>JioMart Registeration Checker</h2>
 
   <input type="text" id="mobile" placeholder="Enter mobile number">
 
-  <button onclick="check()">Check</button>
+  <button onclick="check()">Check Status</button>
 
   <div class="result" id="result"></div>
   <div class="raw" id="raw"></div>
@@ -118,10 +118,10 @@ async function check() {
       const data = JSON.parse(text);
 
       if (data.message === "") {
-        result.innerHTML = "For Found";
+        result.innerHTML = "Fresh Number";
         result.className = "result green";
       } else {
-        result.innerHTML = "Registered";
+        result.innerHTML = "Already Registered";
         result.className = "result red";
       }
 
