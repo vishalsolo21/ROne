@@ -3,46 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>API Response Viewer</title>
+  <title>Mobile Number Checker</title>
 
   <style>
     body {
       font-family: Arial;
-      background: #111;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background: linear-gradient(135deg,#141e30,#243b55);
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
     }
+
     .box {
-      width: 90%;
-      max-width: 350px;
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
+      width:90%;
+      max-width:350px;
+      background:rgba(255,255,255,0.08);
+      padding:20px;
+      border-radius:15px;
+      text-align:center;
     }
+
     input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: none;
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:none;
+      margin:10px 0;
+      text-align:center;
     }
+
     button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      background: #007bff;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      background:linear-gradient(to right,#ff512f,#dd2476);
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
     }
-    #result {
-      margin-top: 15px;
-      word-break: break-all;
-      font-size: 14px;
+
+    .result {
+      margin-top:15px;
+      font-weight:bold;
+    }
+
+    .red { color:#ff4d4d; }
+    .green { color:#00ff99; }
+
+    .raw {
+      margin-top:10px;
+      font-size:12px;
+      opacity:0.7;
+      word-break:break-all;
     }
   </style>
 </head>
@@ -50,30 +65,58 @@
 <body>
 
 <div class="box">
-  <h3>Check API Response</h3>
+  <h2>Check Mobile</h2>
 
   <input type="text" id="mobile" placeholder="Enter mobile number">
 
   <button onclick="check()">Check</button>
 
-  <div id="result"></div>
+  <div class="result" id="result"></div>
+  <div class="raw" id="raw"></div>
 </div>
 
 <script>
 async function check() {
-  const mobile = document.getElementById("mobile").value;
+  const mobile = document.getElementById("mobile").value.trim();
   const result = document.getElementById("result");
+  const raw = document.getElementById("raw");
 
-  result.innerHTML = "Loading...";
+  if (!/^[0-9]{10}$/.test(mobile)) {
+    result.innerHTML = "Enter valid number";
+    result.className = "result red";
+    return;
+  }
+
+  result.innerHTML = "Checking...";
+  raw.innerHTML = "";
 
   try {
-    const res = await fetch("https://jm101.com/jiomartcoupon/getR1Points?mobile=" + mobile);
+    const res = await fetch("/api/check?mobile=" + mobile);
     const text = await res.text();
 
-    result.innerHTML = text; // ✅ show raw API response
+    // Show raw API response
+    raw.innerHTML = text;
+
+    try {
+      const data = JSON.parse(text);
+
+      // ✅ YOUR LOGIC
+      if (data.message === "") {
+        result.innerHTML = "For Found";
+        result.className = "result green";
+      } else {
+        result.innerHTML = "Registered";
+        result.className = "result red";
+      }
+
+    } catch {
+      result.innerHTML = "Invalid API Response";
+      result.className = "result red";
+    }
 
   } catch (err) {
-    result.innerHTML = "Server Error / Blocked";
+    result.innerHTML = "Server Error";
+    result.className = "result red";
   }
 }
 </script>
