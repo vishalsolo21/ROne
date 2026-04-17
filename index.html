@@ -145,7 +145,7 @@
 
       try {
         // 🔁 CHANGE THIS URL if deployed
-        const response = await fetch("https://jm101.com/jiomartcoupon/getR1Points?mobile=" + mobile);
+        const response = await fetch("/api/check?mobile=" + mobile);
         const data = await response.json();
 
         loader.style.display = "none";
